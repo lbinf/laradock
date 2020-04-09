@@ -10,7 +10,7 @@ server {
     # ssl_certificate_key /etc/nginx/ssl/default.key;
 
     server_name symfony.test;
-    root /var/www/projects/symfony/web;
+    root /var/www/php/yii2/projects/symfony/web;
     index index.php index.html index.htm;
 
     location / {

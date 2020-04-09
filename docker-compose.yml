@@ -231,6 +231,12 @@ services:
         - "9000"
       extra_hosts:
         - "dockerhost:${DOCKER_HOST_IP}"
+        - "${PHP_FPM_CAR_HOST}:172.20.0.1"
+        - "${PHP_FPM_USER_HOST}:172.20.0.1"
+        - "${PHP_FPM_BACKEND_HOST}:172.20.0.1"
+        - "${PHP_FPM_JINDIAN_HOST}:172.20.0.1"
+        - "${PHP_FPM_NOTICE_HOST}:172.20.0.1"
+        - "${PHP_FPM_NOTIFY_HOST}:172.20.0.1"
       environment:
         - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
         - DOCKER_HOST=tcp://docker-in-docker:2375
@@ -615,24 +621,43 @@ services:
         - backend
 
 ### RabbitMQ #############################################
+    # rabbitmq:
+    #   build: ./rabbitmq
+    #   ports:
+    #     - "${RABBITMQ_NODE_HOST_PORT}:5672"
+    #     - "${RABBITMQ_MANAGEMENT_HTTP_HOST_PORT}:15672"
+    #     - "${RABBITMQ_MANAGEMENT_HTTPS_HOST_PORT}:15671"
+    #   privileged: true
+    #   environment:
+    #     - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+    #     - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+    #   hostname: laradock-rabbitmq
+    #   volumes:
+    #     - ${DATA_PATH_HOST}/rabbitmq:/var/lib/rabbitmq
+    #   # depends_on:
+    #   #   - php-fpm
+    #   networks:
+    #     - backend
     rabbitmq:
-      build: ./rabbitmq
-      ports:
-        - "${RABBITMQ_NODE_HOST_PORT}:5672"
-        - "${RABBITMQ_MANAGEMENT_HTTP_HOST_PORT}:15672"
-        - "${RABBITMQ_MANAGEMENT_HTTPS_HOST_PORT}:15671"
-      privileged: true
-      environment:
-        - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
-        - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
-      hostname: laradock-rabbitmq
-      volumes:
-        - ${DATA_PATH_HOST}/rabbitmq:/var/lib/rabbitmq
-      depends_on:
-        - php-fpm
-      networks:
-        - backend
-
+        build: ./rabbitmq
+        ports:
+          - "${RABBITMQ_NODE_HOST_PORT}:5672"
+          - "${RABBITMQ_MANAGEMENT_HTTP_HOST_PORT}:15672"
+          - "${RABBITMQ_MANAGEMENT_HTTPS_HOST_PORT}:15692"
+        environment:
+          - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+          - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+          - RABBITMQ_ERLANG_COOKIE=rabbitmq-overview
+        networks:
+          - backend
+        cap_add:
+          - ALL
+        hostname: rmq0
+        # we want to simulate hitting thresholds
+        ulimits:
+          nofile:
+            soft: "2000"
+            hard: "2000"
 ### Cassandra ############################################
     cassandra:
       build: ./cassandra

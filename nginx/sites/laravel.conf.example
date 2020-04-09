@@ -10,7 +10,7 @@ server {
     # ssl_certificate_key /etc/nginx/ssl/default.key;
 
     server_name laravel.test;
-    root /var/www/laravel/public;
+    root /var/www/php/yii2/laravel/public;
     index index.php index.html index.htm;
 
     location / {
@@ -34,7 +34,7 @@ server {
     }
 
     location /.well-known/acme-challenge/ {
-        root /var/www/letsencrypt/;
+        root /var/www/php/yii2/letsencrypt/;
         log_not_found off;
     }
 
